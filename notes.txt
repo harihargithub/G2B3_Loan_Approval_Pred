@@ -1458,3 +1458,173 @@ Just make sure that the form names in your HTML templates match the names you're
 
 Also, remember to handle any potential exceptions that might occur, such as database errors, form validation errors, or errors during the prediction process. This will make your application more robust and user-friendly.
 
+Finally managed to get both predictions -
+inputs = np.array([[1, 1, 1, 0, 0, 22, 12, 44, 22, 1, 0]]) - Prediction: [0]
+
+inputs = np.array([[0, 1, 1, 0, 0, 22, 12, 44, 22, 1, 0]])
+Prediction: [1]
+
+Great job! It looks like you've successfully used your model to make predictions on new data. 
+
+The two different sets of inputs resulted in two different predictions, which shows that your model is able to differentiate between different data points. 
+
+Remember that the interpretation of the predictions (0 and 1) depends on how your model was trained. Typically, in a binary classification problem, 0 might represent a negative class (e.g., loan not approved) and 1 might represent a positive class (e.g., loan approved). 
+
+Keep in mind that the accuracy of these predictions depends on how well your model was trained. If you're not satisfied with the model's performance, you might consider retraining it with different parameters, using a different model, or gathering more training data.
+
+To convert categorical variables like 'yes/no', 'graduate/non-graduate', 'married/un-married' to binary (0/1), you can use a simple mapping function in Python. Here's how you can do it:
+
+```python
+# Define the mapping
+mapping = {
+    'yes': 1,
+    'no': 0,
+    'graduate': 1,
+    'non-graduate': 0,
+    'married': 1,
+    'un-married': 0
+}
+
+# Apply the mapping to your data
+data['column_name'] = data['column_name'].map(mapping)
+```
+
+Replace `'column_name'` with the name of the column you want to convert. This will replace all instances of 'yes' with 1, 'no' with 0, etc., in the specified column.
+
+Please note that this code assumes you have a pandas DataFrame named `data`. If your data is in a different format, you'll need to adjust the code accordingly.
+
+In binary encoding, there's no strict rule that 'Yes' should be 0 and 'No' should be 1, or vice versa. It's a matter of choice and how you want to represent your data. However, in many contexts, 'Yes' is often encoded as 1 and 'No' as 0, because 1 is typically used to denote the presence or truth of a condition, while 0 denotes the absence or falsity of it. 
+
+So, you could use:
+
+```python
+mapping = {
+    'yes': 1,
+    'no': 0
+}
+```
+
+But remember, the important thing is to be consistent in how you apply these encodings throughout your data.
+
+
+male=1/female=0 
+
+married no ie unmarried=o/married yes =1
+
+education - gruduate=0 / non-graduade=1
+
+self_employed - no=0 / yes=1
+
+property_area - urban=2, rural=0, semi=1
+
+loan_Status - approved=0, not approved=1
+
+	dependents	applicantincome	coapplicantincome	loanamount	loan_amount_term	credit_history	gender	married	education	self_employed	property_area	loan_status
+0	0.0	5849.0	0.0	146.412162	360.0	1.0	male	no	graduate	no	urban	Approved
+1	1.0	4583.0	1508.0	128.000000	360.0	1.0	male	yes	graduate	no	rural	Not Approved
+2	0.0	3000.0	0.0	66.000000	360.0	1.0	male	yes	graduate	yes	urban	Approved
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>dependents</th>
+      <th>applicantincome</th>
+      <th>coapplicantincome</th>
+      <th>loanamount</th>
+      <th>loan_amount_term</th>
+      <th>credit_history</th>
+      <th>gender</th>
+      <th>married</th>
+      <th>education</th>
+      <th>self_employed</th>
+      <th>property_area</th>
+      <th>loan_status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>5849.0</td>
+      <td>0.0</td>
+      <td>146.412162</td>
+      <td>360.0</td>
+      <td>1.0</td>
+      <td>male</td>
+      <td>no</td>
+      <td>graduate</td>
+      <td>no</td>
+      <td>urban</td>
+      <td>Approved</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.0</td>
+      <td>4583.0</td>
+      <td>1508.0</td>
+      <td>128.000000</td>
+      <td>360.0</td>
+      <td>1.0</td>
+      <td>male</td>
+      <td>yes</td>
+      <td>graduate</td>
+      <td>no</td>
+      <td>rural</td>
+      <td>Not Approved</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>3000.0</td>
+      <td>0.0</td>
+      <td>66.000000</td>
+      <td>360.0</td>
+      <td>1.0</td>
+      <td>male</td>
+      <td>yes</td>
+      <td>graduate</td>
+      <td>yes</td>
+      <td>urban</td>
+      <td>Approved</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+	dependents	applicantincome	coapplicantincome	loanamount	loan_amount_term	credit_history	gender	married	education	self_employed	property_area	loan_status
+0	0.0	5849.0	0.0	146.412162	360.0	1.0	1	0	0	0	2	0
+1	1.0	4583.0	1508.0	128.000000	360.0	1.0	1	1	0	0	0	1
+2	0.0	3000.0	0.0	66.000000	360.0	1.0	1	1	0	1	2	0
+
+	dependents	applicantincome	coapplicantincome	loanamount	loan_amount_term	credit_history	gender	married	education	self_employed	property_area	loan_status
+0	0.0	5849.0	0.0	146.412162	360.0	1.0	1	0	0	0	2	0
+1	1.0	4583.0	1508.0	128.000000	360.0	1.0	1	1	0	0	0	1
+2	0.0	3000.0	0.0	66.000000	360.0	1.0	1	1	0	1	2	0
+
+Yes, based on the output after applying LabelEncoder, you can interpret the binary and categorical values as follows:
+
+- `gender`: male=1, female=0
+- `married`: no (unmarried)=0, yes (married)=1
+- `education`: graduate=0, non-graduate=1
+- `self_employed`: no=0, yes=1
+- `property_area`: urban=2, rural=0, semi-urban=1
+- `loan_status`: approved=0, not approved=1
+
+This interpretation is based on the assumption that LabelEncoder was applied to each column in the order of the unique values sorted in alphabetical order. For example, for `gender`, 'female' comes before 'male' in alphabetical order, so 'female' is encoded as 0 and 'male' as 1.
+
+Please note that the actual encoding can vary depending on how you applied LabelEncoder. If you applied it differently, the encoding might be different. Always ensure to keep track of how you encode your categorical variables.
