@@ -6,6 +6,12 @@
     <!-- CSS only -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
+        body {
+            background-image: url('/static/background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
         .form-group {
             margin-bottom: 0.75rem;
         }
@@ -16,9 +22,9 @@
             font-size: .8rem;
             line-height: 1;
             color: #06111d;
-            background-color: aqua;
+            background-color: rgb(115, 241, 241);
             background-clip: padding-box;
-            border: 1px solid #ced4da;
+            border: 1px solid #51a6fb;
             border-radius: .25rem;
             transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
@@ -27,7 +33,7 @@
             max-width: 600px;
             margin: 1rem auto;
             padding: .5rem;
-            background-color: #f8f9fa;
+            background-color: #d6f9b1;
             border-radius: .3rem;
             box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
         }
@@ -67,7 +73,7 @@
                 </div>
                 <div>
                     <label for="dependents">Dependents</label>
-                    <input type="number" class="form-control" id="dependents" name="dependents" required>
+                    <input type="number" class="form-control" id="dependents" name="dependents" value="0" required>
                 </div>
                 <div>
                     <label for="education">Education</label>
@@ -101,18 +107,18 @@
                     <input type="number" class="form-control" id="loan_amount_term" name="loan_amount_term" required>
                 </div>
                 <div>
-                    <label for="credit_history">Credit History </label>
-                    <select class="form-control" id="credit_history" name="credit_history">
-                        <option>0</option>
-                        <option>1</option>
-                    </select>
-                </div>
-                <div>
                     <label for="property_area">Property Area</label>
                     <select class="form-control" id="property_area" name="property_area">
                         <option>Rural</option>
                         <option>Semiurban</option>
                         <option>Urban</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="credit_history">Credit History </label>
+                    <select class="form-control" id="credit_history" name="credit_history">
+                        <option>0</option>
+                        <option>1</option>
                     </select>
                 </div>
             </div>
