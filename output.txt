@@ -1,12 +1,12 @@
 Metrics for Random Forest Classifier:
               precision    recall  f1-score   support
 
-           0       0.79      0.94      0.86        87
-           1       0.74      0.39      0.51        36
+           0       0.79      0.97      0.87        87
+           1       0.81      0.36      0.50        36
 
-    accuracy                           0.78       123
-   macro avg       0.76      0.67      0.68       123
-weighted avg       0.77      0.78      0.76       123
+    accuracy                           0.79       123
+   macro avg       0.80      0.66      0.68       123
+weighted avg       0.79      0.79      0.76       123
 Metrics for K Nearest Neighbors:
               precision    recall  f1-score   support
 
@@ -46,9 +46,9 @@ weighted avg       0.82      0.80      0.76       123
 Metrics for Decision Tree Classifier:
               precision    recall  f1-score   support
 
-           0       0.80      0.80      0.80        87
-           1       0.53      0.53      0.53        36
+           0       0.79      0.79      0.79        87
+           1       0.50      0.50      0.50        36
 
-    accuracy                           0.72       123
-   macro avg       0.67      0.67      0.67       123
-weighted avg       0.72      0.72      0.72       123
+    accuracy                           0.71       123
+   macro avg       0.65      0.65      0.65       123
+weighted avg       0.71      0.71      0.71       123

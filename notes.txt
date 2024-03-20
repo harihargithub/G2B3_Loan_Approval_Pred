@@ -1495,3 +1495,8 @@ def predict():
     # Pass data to model for prediction...
 
     return render_template('result.html', prediction=prediction)
+
+
+    {% if prediction %}
+            <p>Your prediction result: {{ prediction }}</p>
+        {% endif %}
