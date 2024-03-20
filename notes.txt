@@ -1436,3 +1436,62 @@ Sure, here's the `predict.html` page with all the input fields:
 This HTML file uses a form to collect the details from the user. The `action` attribute of the form is set to `/predict`, which should be the route in your Flask application that handles the prediction logic. The `method` attribute is set to `post`, which means the form data will be sent as part of the request body.
 
 The link at the bottom of the form directs users to logout.
+
+
+Your code looks good overall. Here are a few things I noticed:
+
+1. You've correctly set up your Flask application, including the routes for home, register, login, predict, enter_details, and logout.
+
+2. You've correctly set up your SQLAlchemy database and User model.
+
+3. You've correctly set up your login and registration system, including password hashing.
+
+4. You've correctly loaded your machine learning model using pickle.
+
+5. In your `/predict` route, you're correctly getting the data from the form, converting it into a pandas DataFrame, making a prediction with your model, and returning the prediction in the response.
+
+6. You're correctly checking if the user is logged in before allowing them to access the `/predict` and `/enter_details` routes.
+
+7. You're correctly creating all database tables and running your app in the `if __name__ == "__main__"` block.
+
+Just make sure that the form names in your HTML templates match the names you're using in your `request.form` calls, and that your machine learning model can handle the data in the format you're providing it.
+
+Also, remember to handle any potential exceptions that might occur, such as database errors, form validation errors, or errors during the prediction process. This will make your application more robust and user-friendly.
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    # Get form data
+    data = request.form
+
+    # Convert fields to numerical values
+    if data['gender'] == 'Male':
+        data['gender'] = 0
+    else:
+        data['gender'] = 1
+
+    if data['married'] == 'Yes':
+        data['married'] = 1
+    else:
+        data['married'] = 0
+
+    if data['education'] == 'Graduate':
+        data['education'] = 1
+    else:
+        data['education'] = 0
+
+    if data['self_employed'] == 'Yes':
+        data['self_employed'] = 1
+    else:
+        data['self_employed'] = 0
+
+    if data['property_area'] == 'Rural':
+        data['property_area'] = 0
+    elif data['property_area'] == 'Semiurban':
+        data['property_area'] = 1
+    else:
+        data['property_area'] = 2
+
+    # Pass data to model for prediction...
+
+    return render_template('result.html', prediction=prediction)

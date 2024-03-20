@@ -14,6 +14,8 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy  # pip install flask_sqlalchemy
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
+import pickle
+import pandas as pd
 
 pymysql.install_as_MySQLdb()
 
@@ -43,7 +45,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(1420), nullable=False)
 
 
 @app.route("/")
@@ -77,19 +79,54 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/enter_details", methods=["GET", "POST"])
-def enter_details():
-    if "username" not in session:
-        return redirect(url_for("login"))
-    return render_template("predict.html")
+# Load the model at the start of your application
+with open("random_forest_model.pkl", "rb") as f:
+    model = pickle.load(f)
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
     if "username" not in session:
         return redirect(url_for("login"))
-    # Implement your prediction logic here
-    return render_template("prediction_results.html")
+
+    form_data = request.form
+    data = {}
+
+    # Convert fields to numerical values
+    data["gender"] = 0 if form_data["gender"] == "Male" else 1
+    data["married"] = 1 if form_data["married"] == "Yes" else 0
+    data["education"] = 1 if form_data["education"] == "Graduate" else 0
+    data["self_employed"] = 1 if form_data["self_employed"] == "Yes" else 0
+
+    if form_data["property_area"] == "Rural":
+        data["property_area"] = 0
+    elif form_data["property_area"] == "Semiurban":
+        data["property_area"] = 1
+    else:
+        data["property_area"] = 2
+
+    # Include the other features
+    data["dependents"] = float(form_data["dependents"])
+    data["applicant_income"] = float(form_data["applicant_income"])
+    data["coapplicant_income"] = float(form_data["coapplicant_income"])
+    data["loan_amount"] = float(form_data["loan_amount"])
+    data["loan_amount_term"] = float(form_data["loan_amount_term"])
+    data["credit_history"] = float(form_data["credit_history"])
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data, index=[0])
+
+    # Make a prediction
+    prediction = model.predict(df)
+
+    return render_template("predict.html", prediction=prediction)
+
+
+@app.route("/enter_details", methods=["GET", "POST"])
+def enter_details():
+    if "username" not in session:
+        return redirect(url_for("login"))
+    return render_template("predict.html")
 
 
 @app.route("/logout")
@@ -99,5 +136,6 @@ def logout():
 
 
 if __name__ == "__main__":
-    db.create_all()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
