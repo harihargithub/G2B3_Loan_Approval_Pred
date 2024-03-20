@@ -1500,3 +1500,34 @@ def predict():
     {% if prediction %}
             <p>Your prediction result: {{ prediction }}</p>
         {% endif %}
+
+        <head>
+    <title>House Loan Eligibility Prediction</title>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: .9rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .container {
+            max-width: 600px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: .3rem;
+            box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+        }
+    </style>
+</head>
