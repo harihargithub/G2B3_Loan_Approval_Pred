@@ -124,11 +124,18 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        {% if prediction %}
+        {% if submitted and prediction is not none %}
         <br>
-        <p style="color:rgb(6, 5, 14); font-size:larger; background-color:gold ;;">The prediction being {{ prediction
+        {% if prediction[0] == 0 %}
+        <p style="color:rgb(6, 5, 14); font-size:larger; background-color:aquamarine ;;">The prediction being {{
+            prediction
             }}, Congrats!! you are
             eligible for loan.</p>
+        {% else %}
+        <p style="color:rgb(6, 5, 14); font-size:larger; background-color:aquamarine ;;">The prediction being {{
+            prediction
+            }}, Sorry, your loan application is rejected and kindly try again after three months.</p>
+        {% endif %}
         {% endif %}
         <p class="mt-3">
             <a href="/logout">Press here to logout</a>

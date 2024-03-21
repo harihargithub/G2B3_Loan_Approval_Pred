@@ -16,6 +16,7 @@ import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 import pickle
 import pandas as pd
+import logging
 
 pymysql.install_as_MySQLdb()
 
@@ -84,6 +85,9 @@ with open("random_forest_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 
+import logging
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     if "username" not in session:
@@ -116,10 +120,17 @@ def predict():
     # Convert the data into a pandas DataFrame
     df = pd.DataFrame(data, index=[0])
 
+    # Log the DataFrame
+    app.logger.info("DataFrame:\n%s", df)
+
     # Make a prediction
     prediction = model.predict(df)
 
-    return render_template("predict.html", prediction=prediction)
+    # Log the prediction
+    app.logger.info("Prediction: %s", prediction)
+
+    # Return the prediction only on successful /enter_details submission
+    return render_template("predict.html", prediction=prediction, submitted=True)
 
 
 @app.route("/enter_details", methods=["GET", "POST"])

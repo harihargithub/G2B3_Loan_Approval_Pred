@@ -1628,3 +1628,245 @@ Yes, based on the output after applying LabelEncoder, you can interpret the bina
 This interpretation is based on the assumption that LabelEncoder was applied to each column in the order of the unique values sorted in alphabetical order. For example, for `gender`, 'female' comes before 'male' in alphabetical order, so 'female' is encoded as 0 and 'male' as 1.
 
 Please note that the actual encoding can vary depending on how you applied LabelEncoder. If you applied it differently, the encoding might be different. Always ensure to keep track of how you encode your categorical variables.
+
+Finally managed to get both predictions -
+inputs = np.array([[1, 1, 1, 0, 0, 22, 12, 44, 22, 1, 0]]) - Prediction: [0]
+
+inputs = np.array([[0, 1, 1, 0, 0, 22, 12, 44, 22, 1, 0]])
+Prediction: [1]
+
+
+# Test prediction using the trained model
+# Load the model from the pickle file
+with open('random_forest_model.pkl', 'rb') as file:
+    model = pickle.load(file)
+
+# Define the inputs and the values to be in standardized format
+inputs = np.array([[1, 1, 1, 0, 0, 22, 12, 44, 22, 1, 0]])  # The order of inputs should match the order of features the model was trained on ie. gender, married, dependents, education, self_employed, applicant_income, coapplicant_income, loan_amount, loan_amount_term, credit_history, property_area
+
+# Use the model to make a prediction
+prediction = model.predict(inputs)
+
+print("Prediction:", prediction)
+
+    Output: Prediction: [0]
+
+    But same input in /enter_details as defined app.py, shared herewith the Prediction is [1]
+
+    The discrepancy between the predictions could be due to a difference in how the data is processed in your standalone script versus the Flask application. 
+
+In the Flask application, you're converting categorical variables to numerical values based on certain conditions. For example, `gender` is set to 0 if it's "Male" and 1 otherwise. 
+
+However, in your standalone script, you're directly providing numerical inputs without any such conversion. If the order of inputs or the way you're encoding categorical variables doesn't match exactly between the two, it could lead to different predictions.
+
+To resolve this, ensure that the data preprocessing steps are consistent between your standalone script and the Flask application. The order of features and the way categorical variables are encoded should be the same in both.
+
+Here's an example of how you might modify your standalone script to match the Flask application:
+
+```python
+# Define the inputs in the same format as in the Flask application
+inputs = {
+    "gender": 1,  # "Male"
+    "married": 1,  # "Yes"
+    "dependents": 1,
+    "education": 0,  # "Graduate"
+    "self_employed": 0,  # "No"
+    "applicant_income": 22,
+    "coapplicant_income": 12,
+    "loan_amount": 44,
+    "loan_amount_term": 22,
+    "credit_history": 1,
+    "property_area": 0,  # "Rural"
+}
+
+# Convert the inputs to a pandas DataFrame
+df = pd.DataFrame(inputs, index=[0])
+
+# Use the model to make a prediction
+prediction = model.predict(df)
+
+print("Prediction:", prediction)
+```
+
+Prediction: [0]
+c:\Users\nhari\anaconda3\Lib\site-packages\sklearn\base.py:486: UserWarning: X has feature names, but RandomForestClassifier was fitted without feature names
+  warnings.warn(
+
+    but feature names properly fitted @ training -
+    # 7a. Train the model using RandomForestClassifier, KNeighborsClassifier, MultinomialNB, GaussianNB, LogisticRegression, DecisionTreeClassifier
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Get the feature names from 'data'
+features = data.columns.tolist()
+
+# Set the column names of 'x_train' and 'x_test'
+x_train.columns = features
+x_test.columns = features
+
+# Define a dictionary with the models
+models = {
+    "Random Forest Classifier": RandomForestClassifier(),
+    "K Nearest Neighbors": KNeighborsClassifier(),
+    "Multinomial NB": MultinomialNB(),
+    "Gaussian NB": GaussianNB(),
+    "Logistic Regression": LogisticRegression(),
+    "Decision Tree Classifier": DecisionTreeClassifier()
+}
+
+# Train the models and calculate the accuracy scores
+for model_name, model in models.items():
+    model.fit(x_train, y_train)
+    pred = model.predict(x_test)
+    accuracy = accuracy_score(y_test, pred)
+    print(f"The accuracy of {model_name} is {accuracy}\n")
+
+This code assumes that the model was trained with the features in the same order as they appear in the `inputs` dictionary. If the order was different, you'll need to adjust the order of features in the dictionary accordingly.
+
+The warning message you're seeing is indicating that the RandomForestClassifier model was fitted without feature names. This warning is raised when you're using a version of scikit-learn that supports feature names, but the model was trained without them.
+
+In your training code, you're setting the column names for `x_train` and `x_test` DataFrames, but these names are not actually used when fitting the model. The RandomForestClassifier (and other scikit-learn models) do not natively support feature names. They operate on the numerical data in the DataFrame and do not use the column names in any way.
+
+When you later use the model to make predictions on new data that has feature names, scikit-learn raises a warning because the model was trained without feature names but is now being used with data that has them.
+
+To resolve this, you can ignore the warning if you're sure that the order of features in your prediction data matches the order of features in the training data. The warning is just to alert you to the potential for problems if the feature order doesn't match.
+
+If you want to ensure that your features are always used in the correct order, you could create a pipeline that includes a column transformer to select and order the features before passing them to the model. This would ensure that the same feature order is used every time, regardless of the order in the input data.
+
+To debug the issue, you can add logging to the `predict` function in your Flask application. This will help you understand the values being processed and where the issue might be. Here's how you can do it:
+
+```python
+import logging
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    form_data = request.form
+    data = {}
+
+    # Convert fields to numerical values
+    data["gender"] = 0 if form_data["gender"] == "Male" else 1
+    data["married"] = 1 if form_data["married"] == "Yes" else 0
+    data["education"] = 1 if form_data["education"] == "Graduate" else 0
+    data["self_employed"] = 1 if form_data["self_employed"] == "Yes" else 0
+
+    if form_data["property_area"] == "Rural":
+        data["property_area"] = 0
+    elif form_data["property_area"] == "Semiurban":
+        data["property_area"] = 1
+    else:
+        data["property_area"] = 2
+
+    # Include the other features
+    data["dependents"] = float(form_data["dependents"])
+    data["applicant_income"] = float(form_data["applicant_income"])
+    data["coapplicant_income"] = float(form_data["coapplicant_income"])
+    data["loan_amount"] = float(form_data["loan_amount"])
+    data["loan_amount_term"] = float(form_data["loan_amount_term"])
+    data["credit_history"] = float(form_data["credit_history"])
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data, index=[0])
+
+    # Log the DataFrame
+    app.logger.info("DataFrame:\n%s", df)
+
+    # Make a prediction
+    prediction = model.predict(df)
+
+    # Log the prediction
+    app.logger.info("Prediction: %s", prediction)
+
+    return render_template("predict.html", prediction=prediction)
+```
+
+This will log the DataFrame and the prediction to the console where your Flask application is running. You can check these logs to see if the DataFrame is being created correctly and if the prediction is being made as expected. If the DataFrame or prediction is not as expected, you can trace back through your code to find out why.
+
+
+ df = pd.DataFrame(data, index=[0])
+
+    # Log the DataFrame
+    app.logger.info("DataFrame:\n%s", df)
+
+    # Make a prediction
+    prediction = model.predict(df)
+
+    # Log the prediction
+    app.logger.info("Prediction: %s", prediction)
+
+Properly logged @ app.py -
+[2024-03-21 16:55:10,168] INFO in app: Prediction: [0]
+
+But here ui output not happening for prediction[0] and happening only for [1] -
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% if prediction %}
+        <br>
+        <p style="color:rgb(6, 5, 14); font-size:larger; background-color:aquamarine ;;">The prediction being {{
+            prediction
+            }}, Congrats!! you are
+            eligible for loan.</p>
+        {% endif %}
+        <p class="mt-3">
+            <a href="/logout">Press here to logout</a>
+        </p>
+    </div>
+</body>
+
+</html>
+
+The issue is with the line `{% if prediction %}` in your HTML template. In Python, `0` is considered `False` when evaluated in a boolean context. So, if your prediction is `0`, the condition `{% if prediction %}` will be `False` and the following block will not be executed.
+
+To fix this, you should check if `prediction` is not `None` instead. Here's how you can do it:
+
+```html
+{% if prediction is not none %}
+<br>
+<p style="color:rgb(6, 5, 14); font-size:larger; background-color:aquamarine ;;">The prediction being {{
+    prediction
+    }}, Congrats!! you are
+    eligible for loan.</p>
+{% else %}
+<br>
+<p style="color:rgb(6, 5, 14); font-size:larger; background-color:aquamarine ;;">The prediction being {{
+    prediction
+    }}, Sorry, you are not eligible for loan.</p>
+{% endif %}
+```
+
+This will ensure that the block is executed whenever `prediction` has a value, regardless of whether it's `0` or `1`.
+
+# prediction[1]
+gender: Female
+married: No
+dependents: 1
+education: Graduate
+self_employed: No
+applicant_income: 22
+coapplicant_income: 12
+loan_amount: 44
+loan_amount_term: 22
+property_area: Rural
+credit_history: 1 
+The prediction being [1], Sorry, your loan application is rejected and kindly try again after three months.   
+
+# prediction[0]:
+gender: Female
+married: Yes
+dependents: 1
+education: Graduate
+self_employed: No
+applicant_income: 22
+coapplicant_income: 12
+loan_amount: 44
+loan_amount_term: 22
+property_area: Rural
+credit_history: 1
+The prediction being [0], Congrats!! you are eligible for loan.
