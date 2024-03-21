@@ -1843,6 +1843,12 @@ To fix this, you should check if `prediction` is not `None` instead. Here's how 
 
 This will ensure that the block is executed whenever `prediction` has a value, regardless of whether it's `0` or `1`.
 
+
+Yes, you're correct. The `/enter_details` route in your Flask application currently just renders the `predict.html` template and doesn't store any input data. The input data from the form in `predict.html` is only used when the form is submitted to the `/predict` route, where it's used to make a prediction with the model loaded from the `random_forest_model.pkl` file. The prediction is then passed to the `predict.html` template to be displayed.
+
+This all happens within the Flask application, which is typically run in a virtual environment. The virtual environment is a self-contained environment that has its own installation directories and doesn't share libraries with other virtual environments. This is useful for isolating your project's dependencies from the dependencies of other projects.
+
+
 # prediction[1]
 gender: Female
 married: No
@@ -1870,3 +1876,4 @@ loan_amount_term: 22
 property_area: Rural
 credit_history: 1
 The prediction being [0], Congrats!! you are eligible for loan.
+

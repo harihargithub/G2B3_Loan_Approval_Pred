@@ -34,7 +34,7 @@ if ENV == "dev":
 else:
     app.debug = False
     app.config["SQLALCHEMY_DATABASE_URI"] = (
-        "mysql://root:1504mysqlrp7%40%23@localhost:3306/loan_approval_pred"
+        "mysql://root:1504mysqlrp7%40%23@localhost:3306/loan_approval_pred_prod"
     )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
