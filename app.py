@@ -58,7 +58,7 @@ def home():
 def register():
     if request.method == "POST":
         username = request.form["username"]
-        password = generate_password_hash(request.form["password"])
+        password = generate_password_hash(request.form["password"], method='pbkdf2:sha256')
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
